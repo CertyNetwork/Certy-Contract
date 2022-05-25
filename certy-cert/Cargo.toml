@@ -1,0 +1,11 @@
+[package]
+name = "certy-cert"
+version = "1.0.0"
+authors = ["Certy Network <contact@certy.network>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "4.0.0-pre.9"
