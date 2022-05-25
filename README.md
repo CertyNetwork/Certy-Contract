@@ -11,7 +11,7 @@ near call $CONTRACT_ID new_default_meta '{"owner_id": "edricngo.testnet"}' --acc
 ## Create category
 
 ```bash
-near call $CONTRACT_ID category_create '{"metadata":{  "title": "Certy",  "description": "Certy",  "media": "Certy",  "issued_at": 1653258436,  "updated_at":1653258436 ,  "fields": "Certy",  "reference": "Certy"}}' --accountId $ACCOUNT_ID --depositYocto 6150000000000000000000
+near call $CONTRACT_ID category_create '{ "category_id": "uuid_here" ,"metadata":{  "title": "Certy",  "description": "Certy",  "media": "Certy",  "issued_at": 1653258436,  "updated_at":1653258436 ,  "fields": "Certy",  "reference": "Certy"}}' --accountId $ACCOUNT_ID --depositYocto 6150000000000000000000
 ```
 
 ## View category info

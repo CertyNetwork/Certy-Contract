@@ -93,12 +93,13 @@ impl Contract {
             "Category already exists"
         );
         self.count_category_id += 1;
+        let mut category_metadata = metadata.clone();
+        category_metadata.issued_at = Some(env::block_timestamp_ms());
+        category_metadata.updated_at = Some(env::block_timestamp_ms());
         //insert the token ID and metadata
-        self.category_metadata_by_id.insert(&category_id, &metadata);
-
+        self.category_metadata_by_id.insert(&category_id, &category_metadata);
         //call the internal method for adding the category to the owner
         self.internal_category_add_to_owner(&category.owner_id, &category_id);
-
         //TO-DO: add the event log.
     }
 
@@ -108,7 +109,9 @@ impl Contract {
         category_id: &CategoryId,
         metadata: &CategoryMetadata,
     ) {
-        self.category_metadata_by_id.insert(&category_id, &metadata);
+        let mut category_metadata = metadata.clone();
+        category_metadata.updated_at = Some(env::block_timestamp_ms());
+        self.category_metadata_by_id.insert(&category_id, &category_metadata);
         //TO-DO: add the event log.
     }
     //delete category
@@ -148,8 +151,11 @@ impl Contract {
             "Token already exists"
         );
         self.count_token_id += 1;
+        let mut cert_metadata = metadata.clone();
+        cert_metadata.issued_at = Some(env::block_timestamp_ms());
+        cert_metadata.updated_at = Some(env::block_timestamp_ms());
         //insert the token ID and metadata
-        self.token_metadata_by_id.insert(&token_id, &metadata);
+        self.token_metadata_by_id.insert(&token_id, &cert_metadata);
 
         //call the internal method for adding the token to the owner
         self.internal_token_add_to_owner(&token.owner_id, &token_id);
@@ -183,7 +189,9 @@ impl Contract {
         token_id: &TokenId,
         metadata: &TokenMetadata,
     ) {
-        self.token_metadata_by_id.insert(&token_id, &metadata);
+        let mut cert_metadata = metadata.clone();
+        cert_metadata.updated_at = Some(env::block_timestamp_ms());
+        self.token_metadata_by_id.insert(&token_id, &cert_metadata);
         //TO-DO: add the event log.
     }
     //add a category to the set of categories an owner has

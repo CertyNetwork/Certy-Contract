@@ -15,8 +15,18 @@ impl Contract {
     pub fn category_update(&mut self, category_id: CategoryId, metadata: CategoryMetadata) {
         assert_at_least_one_yocto();
         self.assert_category_owner(env::predecessor_account_id(), &category_id);
+        let mut category_metadata = self.category_metadata_by_id.get(&category_id).unwrap();
+        // updatable fields
+        category_metadata.title = metadata.title;
+        category_metadata.description = metadata.description;
+        category_metadata.media = metadata.media;
+        category_metadata.media_hash = metadata.media_hash;
+        category_metadata.extra = metadata.extra;
+        category_metadata.reference = metadata.reference;
+        category_metadata.reference_hash = metadata.reference_hash;
+
         let initial_storage_usage = env::storage_usage();
-        self.internal_category_update(&category_id, &metadata);
+        self.internal_category_update(&category_id, &category_metadata);
         let mut required_storage_in_bytes = 0;
         if env::storage_usage() < initial_storage_usage {
             let released_storage = initial_storage_usage - env::storage_usage();

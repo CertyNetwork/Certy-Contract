@@ -46,7 +46,20 @@ impl Contract {
         assert_at_least_one_yocto();
         self.assert_cert_provider(env::predecessor_account_id(), &token_id);
         let initial_storage_usage = env::storage_usage();
-        self.internal_token_update(&token_id, &metadata);
+        let mut cert_metadata = self.token_metadata_by_id.get(&token_id).unwrap();
+        // updatable fields
+        cert_metadata.title = metadata.title;
+        cert_metadata.description = metadata.description;
+        cert_metadata.media = metadata.media;
+        cert_metadata.media_hash = metadata.media_hash;
+        cert_metadata.expires_at = metadata.expires_at;
+        cert_metadata.starts_at = metadata.starts_at;
+        cert_metadata.extra = metadata.extra;
+        cert_metadata.reference = metadata.reference;
+        cert_metadata.reference_hash = metadata.reference_hash;
+
+
+        self.internal_token_update(&token_id, &cert_metadata);
         let mut required_storage_in_bytes = 0;
         if env::storage_usage() < initial_storage_usage {
             let released_storage = initial_storage_usage - env::storage_usage();
