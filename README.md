@@ -35,7 +35,7 @@ near call $CONTRACT_ID category_update '{"metadata":{  "title": "Certy updated",
 # Mint cert
 
 ```bash
-near call $CONTRACT_ID cert_mint '{"metadata":{  "title": "Certy",  "description": "Certy",  "media": "Certy",  "issued_at": 1653258436,  "updated_at":1653258436 ,  "fields": "Certy",  "reference": "Certy"}, "receiver_id" : "'$ACCOUNT_ID'", "category_id" : "0" }' --accountId $ACCOUNT_ID --depositYocto 9180000000000000000000
+near call $CONTRACT_ID nft_mint '{"metadata":{  "title": "Certy",  "description": "Certy",  "media": "Certy",  "issued_at": 1653258436,  "updated_at":1653258436 ,  "fields": "Certy",  "reference": "Certy"}, "receiver_id" : "'$ACCOUNT_ID'", "category_id" : "0" }' --accountId $ACCOUNT_ID --depositYocto 9180000000000000000000
 ```
 
 # View cert by owner

@@ -3,7 +3,7 @@ use crate::*;
 #[near_bindgen]
 impl Contract {
     #[payable]
-    pub fn cert_mint(
+    pub fn nft_mint(
         &mut self,
         metadata: TokenMetadata,
         receiver_id: AccountId,
@@ -17,7 +17,7 @@ impl Contract {
         refund_deposit(required_storage_in_bytes);
     }
     #[payable]
-    pub fn cert_bulk_mint(
+    pub fn nft_bulk_mint(
         &mut self,
         metadatas: Vec<TokenMetadata>,
         receiver_ids: Vec<AccountId>,
