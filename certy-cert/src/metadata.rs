@@ -42,6 +42,7 @@ pub struct Token {
 pub struct JsonToken {
     pub token_id: TokenId,
     pub owner_id: AccountId,
+    pub category_id: CategoryId,
     pub metadata: TokenMetadata,
 }
 

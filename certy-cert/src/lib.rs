@@ -34,8 +34,6 @@ pub struct Contract {
 
     pub count_token_id: u128,
 
-    pub count_category_id: u128,
-
     //keeps track of all the token IDs for a given account
     pub tokens_per_owner: LookupMap<AccountId, UnorderedSet<TokenId>>,
 
@@ -123,7 +121,6 @@ impl Contract {
                 Some(&metadata),
             ),
             count_token_id: 0,
-            count_category_id: 0,
         };
         this
     }

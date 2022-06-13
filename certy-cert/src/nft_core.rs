@@ -47,6 +47,7 @@ impl NonFungibleTokenCore for Contract {
             Some(JsonToken {
                 token_id,
                 owner_id: token.owner_id,
+                category_id: token.category_id,
                 metadata,
             })
         } else {

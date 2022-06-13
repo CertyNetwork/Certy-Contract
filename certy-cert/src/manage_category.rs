@@ -3,10 +3,10 @@ use crate::*;
 #[near_bindgen]
 impl Contract {
     #[payable]
-    pub fn category_create(&mut self, metadata: CategoryMetadata) {
+    pub fn category_create(&mut self, category_id: CategoryId, metadata: CategoryMetadata) {
         assert_at_least_one_yocto();
         let initial_storage_usage = env::storage_usage();
-        self.internal_category_create(env::predecessor_account_id(), metadata);
+        self.internal_category_create(category_id, env::predecessor_account_id(), metadata);
         let required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
 
         refund_deposit(required_storage_in_bytes);

@@ -64,35 +64,33 @@ impl Contract {
     pub(crate) fn assert_cert_provider(&self, account_id: AccountId, token_id: &TokenId) {
         let token = self.tokens_by_id.get(token_id).expect("No token");
         let category = self.categories_by_id.get(&token.category_id).expect("No Category");
-        assert_eq!(account_id, category.owner_id, "Unauthorized");
+        assert_eq!(account_id, category.owner_id, "Not cert provider");
     }
     //used to make sure the user is the owner of the category
     pub(crate) fn assert_category_owner(&self, owner_id: AccountId, category_id: &CategoryId) {
         let category = self.categories_by_id.get(category_id).expect("No Category");
-        assert_eq!(owner_id, category.owner_id, "Unauthorized");
+        assert_eq!(owner_id, category.owner_id, "Not category owner");
     }
     //create new category
     pub(crate) fn internal_category_create(
         &mut self,
+        category_id: CategoryId,
         owner_id: AccountId,
         metadata: CategoryMetadata,
     ) {
-        let category_id: CategoryId = self.count_category_id.to_string();
-
         //specify the category struct that contains the owner ID
         let category = Category {
             //set the owner ID equal to the owner ID passed into the function
             owner_id,
         };
 
-        //insert the token ID and token struct and make sure that the token doesn't exist
+        //insert the category ID and category struct and make sure that the category doesn't exist
         assert!(
             self.categories_by_id
                 .insert(&category_id, &category)
                 .is_none(),
             "Category already exists"
         );
-        self.count_category_id += 1;
         let mut category_metadata = metadata.clone();
         category_metadata.issued_at = Some(env::block_timestamp_ms());
         category_metadata.updated_at = Some(env::block_timestamp_ms());
