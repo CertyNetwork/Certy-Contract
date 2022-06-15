@@ -26,6 +26,10 @@ pub const NFT_METADATA_SPEC: &str = "1.0.0";
 /// This is the name of the NFT standard we're using
 pub const NFT_STANDARD_NAME: &str = "nep171";
 
+pub const CERTY_CERT_STANDARD_NAME: &str = "cecert";
+pub const CERTY_CERT_VERSION: &str = "0.1.0";
+
+
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {

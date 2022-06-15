@@ -63,7 +63,10 @@ impl Contract {
     //used to make sure the user is the owner of the category
     pub(crate) fn assert_cert_provider(&self, account_id: AccountId, token_id: &TokenId) {
         let token = self.tokens_by_id.get(token_id).expect("No token");
-        let category = self.categories_by_id.get(&token.category_id).expect("No Category");
+        let category = self
+            .categories_by_id
+            .get(&token.category_id)
+            .expect("No Category");
         assert_eq!(account_id, category.owner_id, "Not cert provider");
     }
     //used to make sure the user is the owner of the category
@@ -95,10 +98,20 @@ impl Contract {
         category_metadata.issued_at = Some(env::block_timestamp_ms());
         category_metadata.updated_at = Some(env::block_timestamp_ms());
         //insert the token ID and metadata
-        self.category_metadata_by_id.insert(&category_id, &category_metadata);
+        self.category_metadata_by_id
+            .insert(&category_id, &category_metadata);
         //call the internal method for adding the category to the owner
         self.internal_category_add_to_owner(&category.owner_id, &category_id);
-        //TO-DO: add the event log.
+        let category_create_log: EventLog = EventLog {
+            standard: CERTY_CERT_STANDARD_NAME.to_string(),
+            version: CERTY_CERT_VERSION.to_string(),
+            event: EventLogVariant::CategoryCreate(vec![CategoryCreateLog {
+                authorized_id: Some(env::predecessor_account_id().to_string()),
+                owner_id: category.owner_id.to_string(),
+                category_ids: vec![category_id.to_string()],
+            }]),
+        };
+        env::log_str(&category_create_log.to_string());
     }
 
     //update category
@@ -109,8 +122,18 @@ impl Contract {
     ) {
         let mut category_metadata = metadata.clone();
         category_metadata.updated_at = Some(env::block_timestamp_ms());
-        self.category_metadata_by_id.insert(&category_id, &category_metadata);
-        //TO-DO: add the event log.
+        self.category_metadata_by_id
+            .insert(&category_id, &category_metadata);
+        let category_update_log: EventLog = EventLog {
+            standard: CERTY_CERT_STANDARD_NAME.to_string(),
+            version: CERTY_CERT_VERSION.to_string(),
+            event: EventLogVariant::CategoryUpdate(vec![CategoryUpdateLog {
+                authorized_id: Some(env::predecessor_account_id().to_string()),
+                category_ids: vec![category_id.to_string()],
+            }]),
+        };
+
+        env::log_str(&category_update_log.to_string());
     }
     //delete category
     pub(crate) fn internal_category_delete(&mut self, category_id: CategoryId) {
@@ -124,7 +147,16 @@ impl Contract {
         );
         self.categories_by_id.remove(&category_id);
         self.category_metadata_by_id.remove(&category_id);
-        //TO-DO: add the event log.
+        let category_delete_log: EventLog = EventLog {
+            standard: CERTY_CERT_STANDARD_NAME.to_string(),
+            version: CERTY_CERT_VERSION.to_string(),
+            event: EventLogVariant::CategoryDelete(vec![CategoryDeleteLog {
+                authorized_id: Some(env::predecessor_account_id().to_string()),
+                category_ids: vec![category_id.to_string()],
+            }]),
+        };
+
+        env::log_str(&category_delete_log.to_string());
     }
     //mint new token
     pub(crate) fn internal_mint_token(
@@ -182,11 +214,7 @@ impl Contract {
         env::log_str(&nft_mint_log.to_string());
     }
     //update token
-    pub(crate) fn internal_token_update(
-        &mut self,
-        token_id: &TokenId,
-        metadata: &TokenMetadata,
-    ) {
+    pub(crate) fn internal_token_update(&mut self, token_id: &TokenId, metadata: &TokenMetadata) {
         let mut cert_metadata = metadata.clone();
         cert_metadata.updated_at = Some(env::block_timestamp_ms());
         self.token_metadata_by_id.insert(&token_id, &cert_metadata);
@@ -224,14 +252,8 @@ impl Contract {
     //delete token
     pub(crate) fn internal_token_delete(&mut self, token_id: TokenId) {
         let token = self.tokens_by_id.get(&token_id).expect("No Token");
-        self.internal_token_remove_from_owner(
-            &token.owner_id,
-            &token_id,
-        );
-        self.internal_token_remove_from_category(
-            &token.category_id,
-            &token_id,
-        );
+        self.internal_token_remove_from_owner(&token.owner_id, &token_id);
+        self.internal_token_remove_from_category(&token.category_id, &token_id);
         self.tokens_by_id.remove(&token_id);
         self.token_metadata_by_id.remove(&token_id);
         //TO-DO: add the event log.

@@ -3,7 +3,6 @@ use std::fmt;
 use near_sdk::serde::{Deserialize, Serialize};
 
 /// Enum that represents the data type of the EventLog.
-/// The enum can either be an NftMint or an NftTransfer.
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "event", content = "data")]
 #[serde(rename_all = "snake_case")]
@@ -12,6 +11,9 @@ use near_sdk::serde::{Deserialize, Serialize};
 pub enum EventLogVariant {
     NftMint(Vec<NftMintLog>),
     NftTransfer(Vec<NftTransferLog>),
+    CategoryCreate(Vec<CategoryCreateLog>),
+    CategoryUpdate(Vec<CategoryUpdateLog>),
+    CategoryDelete(Vec<CategoryDeleteLog>),
 }
 
 /// Interface to capture data about an event
@@ -76,6 +78,44 @@ pub struct NftTransferLog {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub memo: Option<String>,
+}
+
+/// An event log to capture category create
+///
+/// Arguments
+/// * `authorized_id`: the account called the method
+/// * `owner_id`: "owner.near"
+/// * `category_ids`: ["1", "12345abc"]
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct CategoryCreateLog {
+    pub authorized_id: Option<String>,
+    pub owner_id: String,
+    pub category_ids: Vec<String>,
+}
+
+/// An event log to capture category update
+///
+/// Arguments
+/// * `authorized_id`: the account called the method
+/// * `category_ids`: ["1", "12345abc"]
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct CategoryUpdateLog {
+    pub authorized_id: Option<String>,
+    pub category_ids: Vec<String>,
+}
+
+/// An event log to capture category delete
+///
+/// Arguments
+/// * `authorized_id`: the account called the method
+/// * `category_ids`: ["1", "12345abc"]
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct CategoryDeleteLog {
+    pub authorized_id: Option<String>,
+    pub category_ids: Vec<String>,
 }
 
 #[cfg(test)]
