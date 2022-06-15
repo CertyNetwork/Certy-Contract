@@ -1,11 +1,11 @@
 ## Build and Init
 
 ```bash
-export ACCOUNT_ID=edricngo.testnet
-export ACCOUNT_ID2=cert.edricngo.testnet
+export ACCOUNT_ID=certynetwork.testnet
+export ACCOUNT_ID2=cert.certynetwork.testnet
 ./build.sh
 near deploy --wasmFile target/wasm32-unknown-unknown/release/certy_cert.wasm --accountId $CONTRACT_ID
-near call $CONTRACT_ID new_default_meta '{"owner_id": "edricngo.testnet"}' --accountId edricngo.testnet
+near call $CONTRACT_ID new_default_meta '{"owner_id": "certynetwork.testnet"}' --accountId certynetwork.testnet
 ```
 
 ## Create category
