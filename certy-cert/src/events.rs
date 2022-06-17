@@ -37,7 +37,7 @@ impl fmt::Display for EventLog {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_fmt(format_args!(
             "EVENT_JSON:{}",
-            "pk"
+            &near_sdk::serde_json::to_string(self).map_err(|_| fmt::Error)?
         ))
     }
 }
