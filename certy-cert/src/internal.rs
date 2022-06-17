@@ -391,67 +391,67 @@ impl Contract {
     }
 
     //transfers the NFT to the receiver_id (internal method and can't be called directly via CLI).
-    pub(crate) fn internal_transfer(
-        &mut self,
-        receiver_id: &AccountId,
-        token_id: &TokenId,
-        memo: Option<String>,
-    ) -> Token {
-        //get the token object by passing in the token_id
-        let token = self.tokens_by_id.get(token_id).expect("No token");
+    // pub(crate) fn internal_transfer(
+    //     &mut self,
+    //     receiver_id: &AccountId,
+    //     token_id: &TokenId,
+    //     memo: Option<String>,
+    // ) -> Token {
+    //     //get the token object by passing in the token_id
+    //     let token = self.tokens_by_id.get(token_id).expect("No token");
 
-        //we make sure that the sender isn't sending the token to themselves
-        assert_ne!(
-            &token.owner_id, receiver_id,
-            "The token owner and the receiver should be different"
-        );
+    //     //we make sure that the sender isn't sending the token to themselves
+    //     assert_ne!(
+    //         &token.owner_id, receiver_id,
+    //         "The token owner and the receiver should be different"
+    //     );
 
-        //we remove the token from it's current owner's set
-        self.internal_token_remove_from_owner(&token.owner_id, token_id);
-        //we then add the token to the receiver_id's set
-        self.internal_token_add_to_owner(receiver_id, token_id);
+    //     //we remove the token from it's current owner's set
+    //     self.internal_token_remove_from_owner(&token.owner_id, token_id);
+    //     //we then add the token to the receiver_id's set
+    //     self.internal_token_add_to_owner(receiver_id, token_id);
 
-        //we create a new token struct
-        let new_token = Token {
-            owner_id: receiver_id.clone(),
-            category_id: token.category_id.clone(),
-        };
-        //insert that new token into the tokens_by_id, replacing the old entry
-        self.tokens_by_id.insert(token_id, &new_token);
+    //     //we create a new token struct
+    //     let new_token = Token {
+    //         owner_id: receiver_id.clone(),
+    //         category_id: token.category_id.clone(),
+    //     };
+    //     //insert that new token into the tokens_by_id, replacing the old entry
+    //     self.tokens_by_id.insert(token_id, &new_token);
 
-        //if there was some memo attached, we log it.
-        if let Some(memo) = memo.as_ref() {
-            env::log_str(&format!("Memo: {}", memo).to_string());
-        }
+    //     //if there was some memo attached, we log it.
+    //     if let Some(memo) = memo.as_ref() {
+    //         env::log_str(&format!("Memo: {}", memo).to_string());
+    //     }
 
-        // Default the authorized ID to be None for the logs.
-        let authorized_id = None;
+    //     // Default the authorized ID to be None for the logs.
+    //     let authorized_id = None;
 
-        // Construct the transfer log as per the events standard.
-        let nft_transfer_log: EventLog = EventLog {
-            // Standard name ("nep171").
-            standard: NFT_STANDARD_NAME.to_string(),
-            // Version of the standard ("nft-1.0.0").
-            version: NFT_METADATA_SPEC.to_string(),
-            // The data related with the event stored in a vector.
-            event: EventLogVariant::NftTransfer(vec![NftTransferLog {
-                // The optional authorized account ID to transfer the token on behalf of the old owner.
-                authorized_id,
-                // The old owner's account ID.
-                old_owner_id: token.owner_id.to_string(),
-                // The account ID of the new owner of the token.
-                new_owner_id: receiver_id.to_string(),
-                // A vector containing the token IDs as strings.
-                token_ids: vec![token_id.to_string()],
-                // An optional memo to include.
-                memo,
-            }]),
-        };
+    //     // Construct the transfer log as per the events standard.
+    //     let nft_transfer_log: EventLog = EventLog {
+    //         // Standard name ("nep171").
+    //         standard: NFT_STANDARD_NAME.to_string(),
+    //         // Version of the standard ("nft-1.0.0").
+    //         version: NFT_METADATA_SPEC.to_string(),
+    //         // The data related with the event stored in a vector.
+    //         event: EventLogVariant::NftTransfer(vec![NftTransferLog {
+    //             // The optional authorized account ID to transfer the token on behalf of the old owner.
+    //             authorized_id,
+    //             // The old owner's account ID.
+    //             old_owner_id: token.owner_id.to_string(),
+    //             // The account ID of the new owner of the token.
+    //             new_owner_id: receiver_id.to_string(),
+    //             // A vector containing the token IDs as strings.
+    //             token_ids: vec![token_id.to_string()],
+    //             // An optional memo to include.
+    //             memo,
+    //         }]),
+    //     };
 
-        // Log the serialized json.
-        nft_transfer_log.emit();
+    //     // Log the serialized json.
+    //     nft_transfer_log.emit();
 
-        //return the preivous token object that was transferred.
-        token
-    }
+    //     //return the preivous token object that was transferred.
+    //     token
+    // }
 }
