@@ -1,6 +1,6 @@
-use std::fmt;
+use near_sdk::{serde::{Deserialize, Serialize}, serde_json, env};
 
-use near_sdk::serde::{Deserialize, Serialize};
+use crate::CategoryMetadata;
 
 /// Enum that represents the data type of the EventLog.
 #[derive(Serialize, Deserialize, Debug)]
@@ -33,12 +33,21 @@ pub struct EventLog {
     pub event: EventLogVariant,
 }
 
-impl fmt::Display for EventLog {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_fmt(format_args!(
-            "EVENT_JSON:{}",
-            &near_sdk::serde_json::to_string(self).map_err(|_| fmt::Error)?
-        ))
+impl EventLog {
+    fn to_json_string(&self) -> String {
+        // Events cannot fail to serialize so fine to panic on error
+        #[allow(clippy::redundant_closure)]
+        serde_json::to_string(self).ok().unwrap_or_else(|| env::abort())
+    }
+
+    fn to_json_event_string(&self) -> String {
+        format!("EVENT_JSON:{}", self.to_json_string())
+    }
+
+    /// Logs the event to the host. This is required to ensure that the event is triggered
+    /// and to consume the event.
+    pub(crate) fn emit(self) {
+        near_sdk::env::log_str(&self.to_json_event_string());
     }
 }
 
@@ -92,6 +101,7 @@ pub struct CategoryCreateLog {
     pub authorized_id: Option<String>,
     pub owner_id: String,
     pub category_ids: Vec<String>,
+    pub category_metadatas: Vec<CategoryMetadata>,
 }
 
 /// An event log to capture category update
@@ -104,6 +114,8 @@ pub struct CategoryCreateLog {
 pub struct CategoryUpdateLog {
     pub authorized_id: Option<String>,
     pub category_ids: Vec<String>,
+    pub old_category_metadatas: Vec<CategoryMetadata>,
+    pub new_category_metadatas: Vec<CategoryMetadata>,
 }
 
 /// An event log to capture category delete
@@ -117,62 +129,3 @@ pub struct CategoryDeleteLog {
     pub authorized_id: Option<String>,
     pub category_ids: Vec<String>,
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn nep_format_vector() {
-        let expected = r#"EVENT_JSON:{"standard":"nep171","version":"1.0.0","event":"nft_mint","data":[{"owner_id":"foundation.near","token_ids":["aurora","proximitylabs"]},{"owner_id":"user1.near","token_ids":["meme"]}]}"#;
-        let log = EventLog {
-            standard: "nep171".to_string(),
-            version: "1.0.0".to_string(),
-            event: EventLogVariant::NftMint(vec![
-                NftMintLog {
-                    owner_id: "foundation.near".to_owned(),
-                    token_ids: vec!["aurora".to_string(), "proximitylabs".to_string()],
-                    memo: None,
-                },
-                NftMintLog {
-                    owner_id: "user1.near".to_owned(),
-                    token_ids: vec!["meme".to_string()],
-                    memo: None,
-                },
-            ]),
-        };
-        assert_eq!(expected, log.to_string());
-    }
-
-    #[test]
-    fn nep_format_mint() {
-        let expected = r#"EVENT_JSON:{"standard":"nep171","version":"1.0.0","event":"nft_mint","data":[{"owner_id":"foundation.near","token_ids":["aurora","proximitylabs"]}]}"#;
-        let log = EventLog {
-            standard: "nep171".to_string(),
-            version: "1.0.0".to_string(),
-            event: EventLogVariant::NftMint(vec![NftMintLog {
-                owner_id: "foundation.near".to_owned(),
-                token_ids: vec!["aurora".to_string(), "proximitylabs".to_string()],
-                memo: None,
-            }]),
-        };
-        assert_eq!(expected, log.to_string());
-    }
-
-    #[test]
-    fn nep_format_transfer_all_fields() {
-        let expected = r#"EVENT_JSON:{"standard":"nep171","version":"1.0.0","event":"nft_transfer","data":[{"authorized_id":"market.near","old_owner_id":"user1.near","new_owner_id":"user2.near","token_ids":["token"],"memo":"Go Team!"}]}"#;
-        let log = EventLog {
-            standard: "nep171".to_string(),
-            version: "1.0.0".to_string(),
-            event: EventLogVariant::NftTransfer(vec![NftTransferLog {
-                authorized_id: Some("market.near".to_string()),
-                old_owner_id: "user1.near".to_string(),
-                new_owner_id: "user2.near".to_string(),
-                token_ids: vec!["token".to_string()],
-                memo: Some("Go Team!".to_owned()),
-            }]),
-        };
-        assert_eq!(expected, log.to_string());
-    }
-} 

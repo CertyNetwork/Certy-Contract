@@ -1,7 +1,7 @@
 use crate::*;
 pub type CategoryId = String; //We use 128-bit integers for the category ID, can be changed later
 
-#[derive(BorshDeserialize, Clone, BorshSerialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, Clone, BorshSerialize, Serialize, Deserialize, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct CategoryMetadata {
     pub title: Option<String>, // ex. "AWS Certified Solutions Architect" or "Negative COVID19 PCR TEST CERTIFICATE"

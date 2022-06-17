@@ -109,9 +109,10 @@ impl Contract {
                 authorized_id: Some(env::predecessor_account_id().to_string()),
                 owner_id: category.owner_id.to_string(),
                 category_ids: vec![category_id.to_string()],
+                category_metadatas: vec![category_metadata]
             }]),
         };
-        env::log_str(&category_create_log.to_string());
+        category_create_log.emit();
     }
 
     //update category
@@ -120,6 +121,7 @@ impl Contract {
         category_id: &CategoryId,
         metadata: &CategoryMetadata,
     ) {
+        let old_category_metadata = self.category_metadata_by_id.get(category_id).unwrap();
         let mut category_metadata = metadata.clone();
         category_metadata.updated_at = Some(env::block_timestamp_ms());
         self.category_metadata_by_id
@@ -130,10 +132,12 @@ impl Contract {
             event: EventLogVariant::CategoryUpdate(vec![CategoryUpdateLog {
                 authorized_id: Some(env::predecessor_account_id().to_string()),
                 category_ids: vec![category_id.to_string()],
+                old_category_metadatas: vec![old_category_metadata],
+                new_category_metadatas: vec![category_metadata]
             }]),
         };
 
-        env::log_str(&category_update_log.to_string());
+        category_update_log.emit();
     }
     //delete category
     pub(crate) fn internal_category_delete(&mut self, category_id: CategoryId) {
@@ -156,7 +160,7 @@ impl Contract {
             }]),
         };
 
-        env::log_str(&category_delete_log.to_string());
+        category_delete_log.emit();
     }
     //mint new token
     pub(crate) fn internal_mint_token(
@@ -211,7 +215,7 @@ impl Contract {
         };
 
         // Log the serialized json.
-        env::log_str(&nft_mint_log.to_string());
+        nft_mint_log.emit();
     }
     //update token
     pub(crate) fn internal_token_update(&mut self, token_id: &TokenId, metadata: &TokenMetadata) {
@@ -445,7 +449,7 @@ impl Contract {
         };
 
         // Log the serialized json.
-        env::log_str(&nft_transfer_log.to_string());
+        nft_transfer_log.emit();
 
         //return the preivous token object that was transferred.
         token

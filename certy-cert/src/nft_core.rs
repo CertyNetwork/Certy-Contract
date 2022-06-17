@@ -134,7 +134,7 @@ impl NonFungibleTokenResolver for Contract {
         };
 
         //we perform the actual logging
-        env::log_str(&nft_transfer_log.to_string());
+        nft_transfer_log.emit();
 
         //return false
         false
