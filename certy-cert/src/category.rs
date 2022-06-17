@@ -32,7 +32,7 @@ pub struct Category {
     pub owner_id: AccountId,
 }
 
-//The Json category is what will be returned from view calls. 
+//The Json category is what will be returned from view calls.
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct JsonCategory {

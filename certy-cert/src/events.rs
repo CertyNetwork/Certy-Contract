@@ -1,4 +1,8 @@
-use near_sdk::{serde::{Deserialize, Serialize}, serde_json, env};
+use near_sdk::{
+    env,
+    serde::{Deserialize, Serialize},
+    serde_json,
+};
 
 use crate::CategoryMetadata;
 
@@ -37,7 +41,9 @@ impl EventLog {
     fn to_json_string(&self) -> String {
         // Events cannot fail to serialize so fine to panic on error
         #[allow(clippy::redundant_closure)]
-        serde_json::to_string(self).ok().unwrap_or_else(|| env::abort())
+        serde_json::to_string(self)
+            .ok()
+            .unwrap_or_else(|| env::abort())
     }
 
     fn to_json_event_string(&self) -> String {

@@ -46,19 +46,14 @@ impl Contract {
     // }
     #[payable]
     pub fn category_delete(&mut self, category_id: CategoryId) {
-        assert_one_yocto();
         self.assert_category_owner(env::predecessor_account_id(), &category_id);
         let initial_storage_usage = env::storage_usage();
         self.internal_category_delete(category_id);
-        let mut required_storage_in_bytes = 0;
         if env::storage_usage() < initial_storage_usage {
             let released_storage = initial_storage_usage - env::storage_usage();
             Promise::new(env::predecessor_account_id())
                 .transfer(Balance::from(released_storage) * env::storage_byte_cost());
-        } else {
-            required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
-        }
-        refund_deposit(required_storage_in_bytes);
+        } 
     }
     //Query for all the categories of an owner
     pub fn categories_for_owner(
