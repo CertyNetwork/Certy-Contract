@@ -209,6 +209,8 @@ impl Contract {
                 owner_id: token.owner_id.to_string(),
                 // Vector of token IDs that were minted.
                 token_ids: vec![token_id.to_string()],
+                token_metadatas: vec![metadata],
+                category_id: token.category_id,
                 // An optional memo to include.
                 memo: None,
             }]),
@@ -219,10 +221,28 @@ impl Contract {
     }
     //update token
     pub(crate) fn internal_token_update(&mut self, token_id: &TokenId, metadata: &TokenMetadata) {
+        let old_metadata = self.token_metadata_by_id.get(token_id).unwrap();
         let mut cert_metadata = metadata.clone();
         cert_metadata.updated_at = Some(env::block_timestamp_ms());
         self.token_metadata_by_id.insert(&token_id, &cert_metadata);
-        //TO-DO: add the event log.
+        
+         // Construct the update log as per the events standard.
+         let nft_update_log: EventLog = EventLog {
+            // Standard name ("nep171").
+            standard: NFT_STANDARD_NAME.to_string(),
+            // Version of the standard ("nft-1.0.0").
+            version: NFT_METADATA_SPEC.to_string(),
+            // The data related with the event stored in a vector.
+            event: EventLogVariant::NftUpdate(vec![NftUpdateLog {
+                authorized_id: Some(env::predecessor_account_id().to_string()),
+                token_ids: vec![token_id.to_string()],
+                old_token_metadatas: vec![old_metadata],
+                new_token_metadatas: vec![cert_metadata],
+            }]),
+        };
+
+        // Log the serialized json.
+        nft_update_log.emit();
     }
     //add a category to the set of categories an owner has
     pub(crate) fn internal_category_add_to_owner(

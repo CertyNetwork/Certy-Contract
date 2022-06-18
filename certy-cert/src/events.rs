@@ -4,7 +4,7 @@ use near_sdk::{
     serde_json,
 };
 
-use crate::CategoryMetadata;
+use crate::{CategoryMetadata, TokenMetadata, CategoryId};
 
 /// Enum that represents the data type of the EventLog.
 #[derive(Serialize, Deserialize, Debug)]
@@ -18,6 +18,8 @@ pub enum EventLogVariant {
     CategoryCreate(Vec<CategoryCreateLog>),
     CategoryUpdate(Vec<CategoryUpdateLog>),
     CategoryDelete(Vec<CategoryDeleteLog>),
+    NftUpdate(Vec<NftUpdateLog>),
+
 }
 
 /// Interface to capture data about an event
@@ -68,9 +70,24 @@ impl EventLog {
 pub struct NftMintLog {
     pub owner_id: String,
     pub token_ids: Vec<String>,
-
+    pub token_metadatas: Vec<TokenMetadata>,
+    pub category_id: CategoryId,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub memo: Option<String>,
+}
+
+/// An event log to capture nft update
+///
+/// Arguments
+/// * `authorized_id`: the account called the method
+/// * `category_ids`: ["1", "12345abc"]
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(crate = "near_sdk::serde")]
+pub struct NftUpdateLog {
+    pub authorized_id: Option<String>,
+    pub token_ids: Vec<String>,
+    pub old_token_metadatas: Vec<TokenMetadata>,
+    pub new_token_metadatas: Vec<TokenMetadata>,
 }
 
 /// An event log to capture token transfer
