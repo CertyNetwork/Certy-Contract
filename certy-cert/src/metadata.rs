@@ -13,20 +13,32 @@ pub struct NFTContractMetadata {
     pub reference_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
 }
 
-#[derive(BorshDeserialize, Clone, BorshSerialize, Serialize, Deserialize)]
+#[derive(BorshDeserialize, Clone, BorshSerialize, Serialize, Deserialize, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct TokenMetadata {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>, // ex. "Arch Nemesis: Mail Carrier" or "Parcel #5055"
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>, // free-form description
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub media: Option<String>, // URL to associated media, preferably to decentralized, content-addressed storage
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub media_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of content referenced by the `media` field. Required if `media` is included.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub copies: Option<u64>, // number of copies of this set of metadata in existence when token was minted.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub issued_at: Option<u64>, // When token was issued or minted, Unix epoch in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub expires_at: Option<u64>, // When token expires, Unix epoch in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub starts_at: Option<u64>, // When token starts being valid, Unix epoch in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub updated_at: Option<u64>, // When token was last updated, Unix epoch in milliseconds
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub extra: Option<String>, // anything extra the NFT wants to store on-chain. Can be stringified JSON.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>, // URL to an off-chain JSON file with more info.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reference_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
 }
 

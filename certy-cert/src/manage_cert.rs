@@ -58,7 +58,6 @@ impl Contract {
         cert_metadata.reference = metadata.reference;
         cert_metadata.reference_hash = metadata.reference_hash;
 
-
         self.internal_token_update(&token_id, &cert_metadata);
         let mut required_storage_in_bytes = 0;
         if env::storage_usage() < initial_storage_usage {
