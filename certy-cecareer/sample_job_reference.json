@@ -1,0 +1,12 @@
+{
+    "salary_from": 1000,
+    "salary_to": 2000,
+    "description": "Require 3 years experience in the field of software development.",
+    "title": "Blockchain developer",
+    "work_location_country": "VN",
+    "work_location_city": "Hà Nội",
+    "job_type": "FULLTIME",
+    "application_deadline": 1653258436,
+    "experience_minimum_years": 1,
+    "tags": ["blockchain", "it", "web3"]
+  }

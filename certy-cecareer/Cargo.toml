@@ -1,0 +1,12 @@
+[package]
+name = "certy-cecareer"
+version = "1.0.0"
+authors = ["Certy Network <contact@certy.network>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = "4.0.0-pre.9"
+serde_json = "1.0"
